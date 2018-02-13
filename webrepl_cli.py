@@ -189,6 +189,35 @@ def parse_remote(remote):
         port = int(port)
     return (host, port, fname)
 
+def do_operation(host, port, passwd, op, src_file, dst_file):
+
+    s = socket.socket()
+
+    #default timeout is way too long, and ctrl-c fails on windows
+    s.settimeout(15)
+
+    ai = socket.getaddrinfo(host, port)
+    addr = ai[0][4]
+
+    s.connect(addr)
+    #s = s.makefile("rwb")
+    websocket_helper.client_handshake(s)
+
+    ws = websocket(s)
+
+    login(ws, passwd)
+    print("Remote WebREPL version:", get_ver(ws))
+
+    # Set websocket to send data marked as "binary"
+    ws.ioctl(9, 2)
+
+    if op == "get":
+        get_file(ws, dst_file, src_file)
+    elif op == "put":
+        put_file(ws, src_file, dst_file)
+
+    s.close()
+
 
 def main():
     if len(sys.argv) not in (3, 5):
@@ -229,30 +258,7 @@ def main():
         print("op:%s, host:%s, port:%d, passwd:%s." % (op, host, port, passwd))
         print(src_file, "->", dst_file)
 
-    s = socket.socket()
-
-    ai = socket.getaddrinfo(host, port)
-    addr = ai[0][4]
-
-    s.connect(addr)
-    #s = s.makefile("rwb")
-    websocket_helper.client_handshake(s)
-
-    ws = websocket(s)
-
-    login(ws, passwd)
-    print("Remote WebREPL version:", get_ver(ws))
-
-    # Set websocket to send data marked as "binary"
-    ws.ioctl(9, 2)
-
-    if op == "get":
-        get_file(ws, dst_file, src_file)
-    elif op == "put":
-        put_file(ws, src_file, dst_file)
-
-    s.close()
-
+    do_operation( host, port, passwd, op,  src_file, dst_file)
 
 if __name__ == "__main__":
     main()
