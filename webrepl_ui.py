@@ -58,7 +58,7 @@ class MainApplication(tk.Frame,object):
         else:
             host, port = self.dest_ip.get.split(":")
 
-        webrepl_cli.do_operation(host, port, self.passwd.get(), "put", self.src.get(), dst_file="")
+        webrepl_cli.do_operation(host, port, self.passwd.get(), "put", self.src.get(), dst_file=self.dest_file.get())
 
 if __name__ == "__main__":
     root = tk.Tk()

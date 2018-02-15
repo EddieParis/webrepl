@@ -53,15 +53,17 @@ args = parser.parse_args()
 
 print args
 
-transfered_args = { 'dest_name':'boot.py'}
-for param in args.param:
-    name, value = param.split('=')
-    transfered_args.update( {name:value} )
+transfered_args = { 'dest_name':args.file[0]}
+
+if args.param:
+    for param in args.param:
+        name, value = param.split('=')
+        transfered_args.update( {name:value} )
 
 send_python(serial, "input.py", transfered_args, True)
-send_python(serial, "boot.py", transfered_args, True)
+send_python(serial, args.file, transfered_args, True)
 
 serial = serial.Serial(port=args.serial[0], baudrate=args.baudrate[0], timeout=1)
 send_python(serial, "input.py", transfered_args)
-send_python(serial, "boot.py", transfered_args)
+send_python(serial, args.file, transfered_args)
 serial.close()
