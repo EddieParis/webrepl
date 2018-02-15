@@ -1,4 +1,4 @@
-with open("boot.py", "wt") as boot_file:
+with open({dest_name}, "wt") as boot_file:
 line = ""
 while (True):
 line = input()
