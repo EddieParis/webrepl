@@ -20,27 +20,27 @@ class MainApplication(tk.Frame,object):
         super(MainApplication,self).__init__(parent, *args, **kwargs)
         self.filename = ""
 
-        label_ip = tk.Label(self, text="Destination ip").grid(row=0)
+        label_ip = tk.Label(self, text="Destination ip").grid(sticky=tk.W)
+        tk.Label(self, text="Password").grid(sticky=tk.W)
+        label_src = tk.Label(self, text="Source file").grid(sticky=tk.W)
+        tk.Label(self, text="Destination").grid(sticky=tk.W)
         self.dest_ip = tk.Entry(self)
-        self.dest_ip.grid(row=0, column=1)
+        self.dest_ip.grid(row=0, column=1, sticky=tk.E)
 
-        tk.Label(self, text="Password").grid(row=1)
         self.passwd = tk.Entry(self)
         self.passwd.grid(row=1, column=1)
 
-        label_src = tk.Label(self, text="Source file").grid(row=2)
         self.src = tk.Entry(self)
         self.src.grid(row=2, column=1)
 
-        tk.Label(self, text="Destination").grid(row=3)
+        bt_select = tk.Button(parent, text="Select", command=self.select_file)
+        bt_select.grid(row=2,column=2,sticky=tk.E)
+
         self.dest_file = tk.Entry(self)
         self.dest_file.grid(row=3, column=1)
 
-        bt_select = tk.Button(parent, text="Select", command=self.select_file)
-        bt_select.grid(row=2,column=2)
-
         bt_send = tk.Button(parent, text="Send", command=self.send_file)
-        bt_send.grid(row=5,column=0)
+        bt_send.grid(row=4, columnspan=2, sticky=tk.W)
 
     def select_file(self):
         filename = filedialog.askopenfilename(initialdir = ".",title = "Select file",filetypes = (("python files","*.py"),("all files","*.*")))
@@ -58,7 +58,7 @@ class MainApplication(tk.Frame,object):
         else:
             host, port = self.dest_ip.get.split(":")
 
-        webrepl_cli.do_operation(host, port, self.passwd.get(), "put", self.src.get(), dst_file=self.dest_file.get())
+        webrepl_cli.do_operation(host, port, self.passwd.get(), "put", self.src.get(), dst_file="")
 
 if __name__ == "__main__":
     root = tk.Tk()
