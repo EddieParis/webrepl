@@ -20,10 +20,11 @@ class MainApplication(tk.Frame,object):
         super(MainApplication,self).__init__(parent, *args, **kwargs)
         self.filename = ""
 
-        label_ip = tk.Label(self, text="Destination ip").grid(sticky=tk.W)
-        tk.Label(self, text="Password").grid(sticky=tk.W)
-        label_src = tk.Label(self, text="Source file").grid(sticky=tk.W)
-        tk.Label(self, text="Destination").grid(sticky=tk.W)
+        label_ip = tk.Label(self, text="Destination ip").grid(row=0, column=0, sticky=tk.W)
+        tk.Label(self, text="Password").grid(row=1, column=0, sticky=tk.W)
+        label_src = tk.Label(self, text="Source file").grid(row=2, column=0, sticky=tk.W)
+        tk.Label(self, text="Destination").grid(row=3, column=0, sticky=tk.W)
+
         self.dest_ip = tk.Entry(self)
         self.dest_ip.grid(row=0, column=1, sticky=tk.E)
 
@@ -33,17 +34,22 @@ class MainApplication(tk.Frame,object):
         self.src = tk.Entry(self)
         self.src.grid(row=2, column=1)
 
-        bt_select = tk.Button(parent, text="Select", command=self.select_file)
-        bt_select.grid(row=2,column=2,sticky=tk.E)
+        bt_select = tk.Button(self, text="Select", command=self.select_file)
+        bt_select.grid(row=2, column=2, sticky=tk.E)
 
         self.dest_file = tk.Entry(self)
         self.dest_file.grid(row=3, column=1)
 
-        bt_send = tk.Button(parent, text="Send", command=self.send_file)
-        bt_send.grid(row=4, columnspan=2, sticky=tk.W)
+        bt_send = tk.Button(self, text="Send", command=self.send_file)
+        bt_send.grid(row=4, columnspan=2)
+
+        self.status = tk.Label(self, text="Ready", bd=1, relief=tk.SUNKEN)
+        self.status.grid(row=5, columnspan=3, sticky=tk.W+tk.E)
 
     def select_file(self):
         filename = filedialog.askopenfilename(initialdir = ".",title = "Select file",filetypes = (("python files","*.py"),("all files","*.*")))
+        if filename == ():
+            return
         print (filename)
         # ~ self.src_label.config(text = filename)
         self.src.delete(0, tk.END)
@@ -52,6 +58,10 @@ class MainApplication(tk.Frame,object):
         self.dest_file.insert(0,os.path.basename(filename))
 
     def send_file(self):
+        if self.dest_ip.get() == "":
+            self.status.config(text="Enter destination IP")
+            return
+
         if self.dest_ip.get().find(":") == -1:
             port = 8266
             host = self.dest_ip.get()
